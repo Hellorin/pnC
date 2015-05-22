@@ -130,7 +130,12 @@ int add_pre_arc(struct PN *pn, int pre_place, int transition, int weight) {
 	pre_arc new_pre = {pre_place, transition, weight};
 	new_pres[nb_before] = new_pre;
 	pn->pre_conditions[transition].pre_arcs = new_pres;
-	
+
+	printf("Adding a pre arc:\n");
+	printf("\tPre place p%i\n", pre_place);
+	printf("\tTransition t%i\n", transition);
+	printf("\tWeight %i\n\n", weight);
+
 	assert(pn->pre_conditions[transition].pre_arcs[nb_before].pre_place == pre_place);
 	assert(pn->pre_conditions[transition].pre_arcs[nb_before].transition == transition);
 	
@@ -141,7 +146,7 @@ int add_pre_arc(struct PN *pn, int pre_place, int transition, int weight) {
 /**
  * Add a post arc to a transition
  */
-int add_post_arc(struct PN *pn, int transition, int post_place, int weight) {
+int add_post_arc(struct PN *pn, int post_place, int transition, int weight) {
 	assert(pn != NULL);
 	assert(post_place >= 0);
 	assert(transition >= 0);
@@ -178,6 +183,11 @@ int add_post_arc(struct PN *pn, int transition, int post_place, int weight) {
 	new_posts[nb_before] = new_post;
 	pn->post_conditions[transition].post_arcs = new_posts;
 
+	printf("Adding a post arc:\n");
+	printf("\tTransition t%i\n", transition);
+	printf("\tPost place p%i\n", post_place);
+	printf("\tWeight %i\n\n", weight);
+
 	// Ensure that the post condition is correctly added
 	assert(pn->post_conditions[transition].post_arcs[nb_before].post_place == post_place);
 	assert(pn->post_conditions[transition].post_arcs[nb_before].transition == transition);
@@ -186,17 +196,101 @@ int add_post_arc(struct PN *pn, int transition, int post_place, int weight) {
 }
 
 
-int* m_enabled(struct PN *pn) {
-	
-	for (int i=0; i<pn->nb_transitions; i++) {
-		int nb_pre_arcs = pn->pre_conditions[i].nb_pre_arcs;
-		for (int j=0; j<nb_pre_arcs; j++) {
-			int pre_place = pn->pre_conditions[i].pre_arcs[j].pre_place
-			if (pn->pre_conditions[i].pre_arcs[j].weight <= pn->marking[pre_place])
-		}
-		printf("%i\n", nb_pre_arcs);
+void consume_pre(struct PN * pn, int t, int * marking) {
+	for (int i=0; i<pn->pre_conditions[t].nb_pre_arcs; i++) {
+		int pre_place = pn->pre_conditions[t].pre_arcs[i].pre_place;
+		int weight = pn->pre_conditions[t].pre_arcs[i].weight;
+		marking[pre_place] -= weight;
 	}
-	int * transitions;
+}
+
+void produce_post(struct PN * pn, int t, int * marking) {
+	for (int i=0; i<pn->post_conditions[t].nb_post_arcs; i++) {
+		int post_place = pn->post_conditions[t].post_arcs[i].post_place;
+		int weight = pn->post_conditions[t].post_arcs[i].weight;
+		marking[post_place] += weight;
+	}
+}
+
+/**
+ * Fire the transition t
+ */
+int *fire_transition(struct PN * pn, int t) {
+	int * new_marking = malloc(sizeof(int) * pn->nb_places);
+	
+	// Copy a the current marking to a new marking
+	for (int i=0; i<pn->nb_places; i++) {
+		new_marking[i] = pn->marking[i];
+	}
+	
+	// Fire the transition
+	if (t_m_enabled(pn, t)) {
+		consume_pre(pn, t, new_marking);
+
+		produce_post(pn, t, new_marking);
+	}
+
+	return new_marking;
+}
+
+int **fire_all_enabled_transitions(struct PN * pn) {
+	int ** all_reachable_marking = malloc(sizeof (int *) * pn->nb_transitions);
+
+	for (int i=0; i<pn->nb_transitions; i++) {
+		if (t_m_enabled) {
+			int * new_marking = fire_transition(pn, i);
+			all_reachable_marking[i] = new_marking;
+		} else {
+			int * new_marking = malloc(sizeof(int) * pn->nb_places);
+			for (int j=0; j<pn->nb_places; j++) {
+				new_marking[j] = -1;
+			}
+		}
+	}
+
+	return all_reachable_marking;
+}
+
+/**
+ * Return if the transition t is M-enabled
+ */
+int t_m_enabled(struct PN *pn, int t) {
+	int nb_pre_arcs = pn->pre_conditions[t].nb_pre_arcs;
+	int nb_successful_pre = 0;
+	
+	// Check the precondition of the transition
+	for (int j=0; j<nb_pre_arcs; j++) {
+		int pre_place = pn->pre_conditions[t].pre_arcs[j].pre_place;
+		if (pn->pre_conditions[t].pre_arcs[j].weight <= pn->marking[pre_place]) {
+			nb_successful_pre++;
+		}
+	}
+	
+	// Return 1 if the pre condition is true, 0 otherwise
+	return nb_pre_arcs == nb_successful_pre;
+}
+
+
+/**
+ * Return all the M-enabled transition
+ */
+int* m_enabled(struct PN *pn) {
+	int * transitions = malloc(sizeof(int) * pn->nb_transitions);
+
+	// Check for each transition, if its pre condition is satisfied
+	int nb_enabled_transition = 0;
+	for (int i=0; i<pn->nb_transitions; i++) {
+		if (t_m_enabled(pn, i)) {
+			transitions[nb_enabled_transition] = i;
+			nb_enabled_transition++;
+		}
+	}
+
+	// The value of -1 help to determine the transition not having
+	// its pre condition satisfied
+	for (int i=nb_enabled_transition; i<pn->nb_transitions; i++) {
+		transitions[i] = -1;
+	}
 
 	return transitions;
 }
@@ -208,6 +302,7 @@ void destroy_pn(struct PN *pn) {
 	free(pn->places);
 	free(pn->transitions);
 
+
 	// Free pre conditions
 	for (int i=0; i<pn->nb_transitions; i++) {
 		int nb_arcs = pn->pre_conditions[i].nb_pre_arcs;
@@ -215,7 +310,7 @@ void destroy_pn(struct PN *pn) {
 		// Free pre arcs
 		if (pn->pre_conditions[i].pre_arcs != NULL)
 			free(pn->pre_conditions[i].pre_arcs);
-		free(pn->pre_conditions);
+		//free(pn->pre_conditions);
 	}
 
 	// Free post conditions
@@ -225,7 +320,7 @@ void destroy_pn(struct PN *pn) {
 		// Free post arcs
 		if (pn->post_conditions[i].post_arcs != NULL)
 			free(pn->post_conditions[i].post_arcs);
-		free(pn->post_conditions);
+		//free(pn->post_conditions);
 	}
 
 	// Free marking
@@ -235,16 +330,41 @@ void destroy_pn(struct PN *pn) {
 
 int main()
 {
-	int marking[3] = {0,0,0};
-	struct PN *pn = new_pn(3, 1, marking);
+	int marking[4] = {1,0,1,0};
+	struct PN *pn = new_pn(4, 2, marking);
 	
 	add_pre_arc(pn, 0, 0, 1);
-	add_pre_arc(pn, 1, 0, 1);
+	add_post_arc(pn, 1, 0, 1);
 	
-	add_post_arc(pn, 0, 1, 1);
+	add_pre_arc(pn, 2, 1, 1);
+	add_post_arc(pn, 3, 1, 1);
 	
-	m_enabled(pn);
+	int * en_transitions = m_enabled(pn);
+	/*for (int i=0; i<2; i++) {
+		if (en_transitions[i] == -1) {
+			break;
+		}
+		printf("t%i = %i\n", i, en_transitions[i]);
+	}*/
 	
+	int * new_marking = fire_transition(pn, 0);
+	/*for (int i=0; i<pn->nb_places; i++) {
+		printf("%i, ", new_marking[i]);
+	}
+	printf("\n");*/
+	
+	int ** all_marking = fire_all_enabled_transitions(pn);
+	for (int i=0; i<pn->nb_transitions; i++) {
+		for (int j=0; j<pn->nb_places; j++) {
+			if (all_marking[i][j] != -1) {
+				printf("%i ", all_marking[i][j]);
+			} else {
+				continue;
+			}
+		}
+		printf("\n");
+	}
+		
 	destroy_pn(pn);
 	
 	return 0;

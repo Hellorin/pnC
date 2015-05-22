@@ -185,6 +185,22 @@ int add_post_arc(struct PN *pn, int transition, int post_place, int weight) {
 	return 0;
 }
 
+
+int* m_enabled(struct PN *pn) {
+	
+	for (int i=0; i<pn->nb_transitions; i++) {
+		int nb_pre_arcs = pn->pre_conditions[i].nb_pre_arcs;
+		for (int j=0; j<nb_pre_arcs; j++) {
+			int pre_place = pn->pre_conditions[i].pre_arcs[j].pre_place
+			if (pn->pre_conditions[i].pre_arcs[j].weight <= pn->marking[pre_place])
+		}
+		printf("%i\n", nb_pre_arcs);
+	}
+	int * transitions;
+
+	return transitions;
+}
+
 /**
  * Destroy a PN (free memory)
  */
@@ -216,6 +232,7 @@ void destroy_pn(struct PN *pn) {
 	free(pn->marking);
 }
 
+
 int main()
 {
 	int marking[3] = {0,0,0};
@@ -225,6 +242,8 @@ int main()
 	add_pre_arc(pn, 1, 0, 1);
 	
 	add_post_arc(pn, 0, 1, 1);
+	
+	m_enabled(pn);
 	
 	destroy_pn(pn);
 	

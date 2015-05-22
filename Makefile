@@ -1,6 +1,6 @@
 all:
 	mkdir -p bin
-	gcc src/pnc.c -o bin/pnc.o -dNDEBUG
+	gcc -dNDEBUG src/pnc.c -o bin/pnc.o 
 	
 debug:
 	mkdir -p bin

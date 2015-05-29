@@ -12,6 +12,11 @@
 struct PN *new_pn(signed int nb_places, signed int nb_transitions, signed int marking[]);
 
 /**
+ * Destroy a PN (free memory)
+ */
+void destroy_pn(struct PN *pn);
+
+/**
  * Add a pre arc to a transition
  */
 int add_pre_arc(struct PN *pn, signed int pre_place, signed int transition, signed int weight);
@@ -35,10 +40,5 @@ int* m_enabled(struct PN *pn);
  * Fire the transition t
  */
 int *fire_transition(struct PN * pn, signed int t);
-
-/**
- * Destroy a PN (free memory)
- */
-void destroy_pn(struct PN *pn);
 
 #endif

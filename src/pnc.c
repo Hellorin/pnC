@@ -46,14 +46,20 @@ struct PN {
 	post_conds *post_conditions; // F_2 and W_2
 	
 	// M (marking)
-	int *marking;
+	signed int *marking;
 };
 
 /**
  * Create a new PN. Gives the number of places, transitions and M0,
  * the initial marking
  */
-struct PN *new_pn(int nb_places, int nb_transitions, int marking[]) {
+struct PN *new_pn(int nb_places, int nb_transitions, signed int marking[]) {
+	assert(nb_transitions != 0 && nb_places != 0);
+	
+	if (nb_transitions == 0 && nb_places == 0) {
+		return NULL;
+	}
+
 	
 	struct PN *pn = malloc(sizeof(struct PN));
 
@@ -69,6 +75,7 @@ struct PN *new_pn(int nb_places, int nb_transitions, int marking[]) {
 	for (int i=0; i<nb_transitions; i++) {
 		pn->pre_conditions[i].nb_pre_arcs = 0;
 	}
+
 	// Initialize post conditions
 	pn->post_conditions = malloc (sizeof (post_conds) * nb_transitions);
 	for (int i=0; i<nb_transitions; i++) {
@@ -95,7 +102,7 @@ struct PN *new_pn(int nb_places, int nb_transitions, int marking[]) {
 /**
  * Add a pre arc to a transition
  */
-int add_pre_arc(struct PN *pn, int pre_place, int transition, int weight) {
+int add_pre_arc(struct PN *pn, int pre_place, int transition, signed int weight) {
 	assert(pn != NULL);
 	assert(pre_place >= 0);
 	assert(transition >= 0);
@@ -151,7 +158,7 @@ int add_post_arc(struct PN *pn, int post_place, int transition, int weight) {
 	assert(pn != NULL);
 	assert(post_place >= 0);
 	assert(transition >= 0);
-
+	
 	// Assure that the given transition exists
 	if (transition >= pn->nb_transitions) {
 		// Error
@@ -309,9 +316,9 @@ void destroy_pn(struct PN *pn) {
 		int nb_arcs = pn->pre_conditions[i].nb_pre_arcs;
 
 		// Free pre arcs
-		if (pn->pre_conditions[i].pre_arcs != NULL)
+		if (nb_arcs != 0) {
 			free(pn->pre_conditions[i].pre_arcs);
-		//free(pn->pre_conditions);
+		}
 	}
 
 	// Free post conditions
@@ -319,9 +326,9 @@ void destroy_pn(struct PN *pn) {
 		int nb_arcs = pn->post_conditions[i].nb_post_arcs;
 		
 		// Free post arcs
-		if (pn->post_conditions[i].post_arcs != NULL)
+		if (nb_arcs != 0) {
 			free(pn->post_conditions[i].post_arcs);
-		//free(pn->post_conditions);
+		}
 	}
 
 	// Free marking
@@ -329,7 +336,7 @@ void destroy_pn(struct PN *pn) {
 }
 
 
-int main()
+/*int main()
 {
 	int marking[4] = {1,0,1,0};
 	struct PN *pn = new_pn(4, 2, marking);
@@ -341,18 +348,18 @@ int main()
 	add_post_arc(pn, 3, 1, 1);
 	
 	int * en_transitions = m_enabled(pn);
-	/*for (int i=0; i<2; i++) {
+	for (int i=0; i<2; i++) {
 		if (en_transitions[i] == -1) {
 			break;
 		}
 		printf("t%i = %i\n", i, en_transitions[i]);
-	}*/
+	}
 	
 	int * new_marking = fire_transition(pn, 0);
-	/*for (int i=0; i<pn->nb_places; i++) {
+	for (int i=0; i<pn->nb_places; i++) {
 		printf("%i, ", new_marking[i]);
 	}
-	printf("\n");*/
+	printf("\n");
 	
 	int ** all_marking = fire_all_enabled_transitions(pn);
 	for (int i=0; i<pn->nb_transitions; i++) {
@@ -369,7 +376,7 @@ int main()
 	destroy_pn(pn);
 	
 	return 0;
-}
+}*/
 
 
 

@@ -6,7 +6,6 @@
 // Personal includes
 #include "pnc.h"
 
-
 typedef struct {
 	signed int pre_place;
 	signed int transition;

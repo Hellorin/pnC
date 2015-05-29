@@ -239,6 +239,13 @@ void produce_post(struct PN * pn, signed int t, signed int * marking) {
  * Fire the transition t
  */
 int *fire_transition(struct PN * pn, signed int t) {
+	// Assure that the given transition exists
+	if (t >= pn->nb_transitions) {
+		// Error
+		return pn->marking;
+	}
+	
+	
 	int * new_marking = malloc(sizeof(int) * pn->nb_places);
 	
 	// Copy a the current marking to a new marking

@@ -65,3 +65,7 @@ int get_element(dyn_array * array, signed int index) {
 
 	return array->elems[index];
 }
+
+void destroy_array(dynarray * array) {
+	free(array->elems);
+}

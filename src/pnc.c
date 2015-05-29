@@ -7,12 +7,6 @@
 #include "pnc.h"
 
 typedef struct {
-	signed int place;
-	signed int transition;
-	signed int weight;
-} arc;
-
-typedef struct {
 	signed int nb_pre_arcs;
 	arc *pre_arcs;
 } pre_conds;

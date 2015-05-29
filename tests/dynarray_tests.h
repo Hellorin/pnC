@@ -6,6 +6,7 @@
 #include <setjmp.h>
 #include <cmocka.h>
 #include "dynarray.h"
+#include "pnc.h"
 
 // Testing the creation of a dynamic array
 void create_array_test1(void **state);

@@ -1,7 +1,7 @@
 #include "dynarray.h"
 
 dyn_array * new_array() {
-	dyn_array *array = malloc(sizeof(dyn_array));
+	dyn_array *array = malloc(sizeof(*array));
 
 	array->max_size = MAX_ELEMS;
 	array->nb_elems = 0;
@@ -30,7 +30,7 @@ dyn_array * new_array_wbounds(signed int max_size) {
 int extend_array(dyn_array * array) {
 	array->max_size += array->inc;
 	
-	signed int * new_array = malloc(sizeof(array->elems) * array->max_size);
+	arc * new_array = malloc(sizeof(array->elems) * array->max_size);
 	for (int i=0; i<array->nb_elems; i++) {
 		new_array[i] = array->elems[i];
 	}
@@ -39,7 +39,7 @@ int extend_array(dyn_array * array) {
 }
 
 
-int append_element(dyn_array * array, signed int elem) {
+int append_element(dyn_array * array, arc elem) {
 	if (array->nb_elems == array->max_size) {
 		extend_array(array);
 	}
@@ -49,7 +49,7 @@ int append_element(dyn_array * array, signed int elem) {
 	return 0;
 }
 
-int set_element(dyn_array * array, signed int index, signed int elem) {
+int set_element(dyn_array * array, signed int index, arc elem) {
 	if (index < 0 || index >= array->nb_elems) {
 		return -1;
 	}
@@ -58,12 +58,16 @@ int set_element(dyn_array * array, signed int index, signed int elem) {
 	return 0;
 }
 
-int get_element(dyn_array * array, signed int index) {
+arc* get_element(dyn_array * array, signed int index) {
 	if (index < 0 || index >= array->nb_elems) {
-		return -1;
+		arc *a = malloc(sizeof(*a));
+		a->place = -1;
+		a->transition = -1;
+		a->weight = -1;
+		return a;
 	}
 
-	return array->elems[index];
+	return &array->elems[index];
 }
 
 void destroy_array(dyn_array * array) {

@@ -29,13 +29,13 @@ int main() {
 		cmocka_unit_test(create_array_test1),
 		cmocka_unit_test(create_array_test2),
 		cmocka_unit_test(create_array_test3),
-		cmocka_unit_test(append_test1),
-		cmocka_unit_test(append_test2),
+		cmocka_unit_test(append_test1)
+		/*cmocka_unit_test(append_test2),
 		cmocka_unit_test(append_test3),
 			
 		cmocka_unit_test(getset_test1),
 		cmocka_unit_test(get_test1),
-		cmocka_unit_test(set_test1)
+		cmocka_unit_test(set_test1)*/
 		
 	};
 	return cmocka_run_group_tests(tests, NULL, NULL);

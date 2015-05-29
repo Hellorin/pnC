@@ -6,7 +6,7 @@
 #include <assert.h>
 
 #include "dynarray.h"
-
+#include "arc.h"
 /**
  * Create a new PN. Gives the number of places, transitions and M0,
  * the initial marking

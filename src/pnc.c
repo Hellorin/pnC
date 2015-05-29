@@ -46,24 +46,24 @@ struct PN *new_pn(signed int nb_places, signed int nb_transitions, signed int ma
 		return NULL;
 	}
 
-	struct PN *pn = malloc(sizeof(struct PN));
+	struct PN *pn = malloc(sizeof(*pn));
 
 	// Initialize places
 	pn->nb_places = nb_places;
-	pn->places = malloc (sizeof (int) * nb_places);
+	pn->places = malloc (sizeof (pn->places) * nb_places);
 	for (int i=0; i<nb_places; i ++) {
 		pn->places[i] = i;
 	}
 
 	// Initialize pre conditions	
-	pn->pre_conditions = malloc (sizeof (pre_conds) * nb_transitions);
+	pn->pre_conditions = malloc (sizeof (*pn->pre_conditions) * nb_transitions);
 	for (int i=0; i<nb_transitions; i++) {
 		pn->pre_conditions[i].nb_pre_arcs = 0;
 		pn->pre_conditions[i].pre_arcs = new_array();
 	}
 
 	// Initialize post conditions
-	pn->post_conditions = malloc (sizeof (post_conds) * nb_transitions);
+	pn->post_conditions = malloc (sizeof (*pn->post_conditions) * nb_transitions);
 	for (int i=0; i<nb_transitions; i++) {
 		pn->post_conditions[i].nb_post_arcs = 0;
 		pn->post_conditions[i].post_arcs = new_array();
@@ -71,13 +71,13 @@ struct PN *new_pn(signed int nb_places, signed int nb_transitions, signed int ma
 
 	// Initialize transitions
 	pn->nb_transitions = nb_transitions;
-	pn->transitions = malloc (sizeof (int) * nb_transitions);
+	pn->transitions = malloc (sizeof (*pn->transitions) * nb_transitions);
 	for (int i=0; i<nb_transitions; i ++) {
 		pn->transitions[i] = i;
 	}
 
 	// Initialize marking
-	pn->marking = malloc(sizeof(int) * nb_places);
+	pn->marking = malloc(sizeof(*pn->marking) * nb_places);
 	for (int i=0; i<nb_places; i++) {
 		pn->marking[i] = marking[i];
 	}
@@ -212,13 +212,13 @@ void produce_post(struct PN * pn, signed int t, signed int * marking) {
  */
 int *fire_transition(struct PN * pn, signed int t) {
 	// Assure that the given transition exists
-	if (t >= pn->nb_transitions) {
+	if (t < 0 || t >= pn->nb_transitions) {
 		// Error
 		return pn->marking;
 	}
 	
 	
-	int * new_marking = malloc(sizeof(int) * pn->nb_places);
+	int * new_marking = malloc(sizeof(* new_marking) * pn->nb_places);
 	
 	// Copy a the current marking to a new marking
 	for (int i=0; i<pn->nb_places; i++) {
@@ -243,7 +243,7 @@ int **fire_all_enabled_transitions(struct PN * pn) {
 			int * new_marking = fire_transition(pn, i);
 			all_reachable_marking[i] = new_marking;
 		} else {
-			int * new_marking = malloc(sizeof(int) * pn->nb_places);
+			int * new_marking = malloc(sizeof(* new_marking) * pn->nb_places);
 			for (int j=0; j<pn->nb_places; j++) {
 				new_marking[j] = -1;
 			}

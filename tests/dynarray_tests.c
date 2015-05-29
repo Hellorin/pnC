@@ -17,6 +17,7 @@ void create_array_test2(void **state) {
 	assert_non_null(array);
 	assert_true(array->nb_elems == 0);
 	assert_true(array->max_size == 2);
+
 }
 
 /* A testcase that test the creation of an array with a

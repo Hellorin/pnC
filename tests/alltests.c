@@ -20,7 +20,10 @@ int main() {
 		// Testing the addition of post arcs to a PN
 		cmocka_unit_test(add_post_arc_test1),
 		cmocka_unit_test(add_post_arc_test2),
-		cmocka_unit_test(add_post_arc_test3)
+		cmocka_unit_test(add_post_arc_test3),
+
+		// Testing the function that tells you which transition are enabled 
+		cmocka_unit_test(t_enabled1_test)
 	};
 	return cmocka_run_group_tests(tests, NULL, NULL);
 }

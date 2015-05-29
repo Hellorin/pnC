@@ -129,3 +129,29 @@ void add_post_arc_test3(void **state) {
 
 	destroy_pn(pn);
 }
+
+
+/* TODO: comment */
+void t_enabled1_test(void **state) {
+	signed int marking[4] = {1,0,1,0};
+	struct PN *pn = new_pn(4, 2, marking);
+	assert_non_null(pn);
+	
+	assert_true(add_pre_arc(pn, 0, 0, 1) == 0);
+	assert_true(add_post_arc(pn, 1, 0, 1) == 0);
+	
+	assert_true(add_pre_arc(pn, 2, 1, 1) == 0);
+	assert_true(add_post_arc(pn, 3, 1, 1) == 0);
+	
+	signed int * en_transitions = m_enabled(pn);
+	signed int expected_transitions[2] = {0,1};
+	
+	for (int i=0; i<2; i++) {
+		if (en_transitions[i] == -1) {
+			break;
+		}
+		assert_true(en_transitions[i] == expected_transitions[i]);
+		printf("t%i = %i\n", i, en_transitions[i]);
+	}
+	
+}

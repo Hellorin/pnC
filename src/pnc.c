@@ -8,37 +8,37 @@
 
 
 typedef struct {
-	int pre_place;
-	int transition;
-	int weight;
+	signed int pre_place;
+	signed int transition;
+	signed int weight;
 } pre_arc;
 
 typedef struct {
-	int transition;
-	int post_place;
-	int weight;
+	signed int transition;
+	signed int post_place;
+	signed int weight;
 } post_arc;
 
 typedef struct {
-	int nb_pre_arcs;
+	signed int nb_pre_arcs;
 	pre_arc *pre_arcs;
 } pre_conds;
 
 // 
 typedef struct {
 	post_arc *post_arcs;
-	int nb_post_arcs;
+	signed int nb_post_arcs;
 } post_conds;
 
 struct PN {
-	int nb_places;
-	int nb_transitions;
+	signed int nb_places;
+	signed int nb_transitions;
 
 	// P (places)
-	int *places;
+	signed int *places;
 
 	// T (transitions)
-	int *transitions;
+	signed int *transitions;
 	
 	// F = F_1 U F_2 (flow)
 	// W = W_1 U W_2 (weight)
@@ -102,18 +102,24 @@ struct PN *new_pn(int nb_places, int nb_transitions, signed int marking[]) {
 /**
  * Add a pre arc to a transition
  */
-int add_pre_arc(struct PN *pn, int pre_place, int transition, signed int weight) {
+int add_pre_arc(struct PN *pn, signed int pre_place, signed int transition, signed int weight) {
 	assert(pn != NULL);
 	assert(pre_place >= 0);
 	assert(transition >= 0);
-
-	// Assure that the pre place to which the arc start from exists
+	assert(weight > 0);
+	
+	// Ensure that the pre place to which the arc start from exists
 	if (pre_place >= pn->nb_places) {
 		// Error
 		return -1;
 	}
-	// Assure that the given transition exists
+	// Ensure that the given transition exists
 	if (transition >= pn->nb_transitions) {
+		// Error
+		return -1;
+	}
+	// Ensure that the given weight is higher than 0
+	if (weight == 0) {
 		// Error
 		return -1;
 	}
@@ -139,10 +145,12 @@ int add_pre_arc(struct PN *pn, int pre_place, int transition, signed int weight)
 	new_pres[nb_before] = new_pre;
 	pn->pre_conditions[transition].pre_arcs = new_pres;
 
+	#ifdef VERBOSE
 	printf("Adding a pre arc:\n");
 	printf("\tPre place p%i\n", pre_place);
 	printf("\tTransition t%i\n", transition);
 	printf("\tWeight %i\n\n", weight);
+	#endif
 
 	assert(pn->pre_conditions[transition].pre_arcs[nb_before].pre_place == pre_place);
 	assert(pn->pre_conditions[transition].pre_arcs[nb_before].transition == transition);
@@ -154,7 +162,7 @@ int add_pre_arc(struct PN *pn, int pre_place, int transition, signed int weight)
 /**
  * Add a post arc to a transition
  */
-int add_post_arc(struct PN *pn, int post_place, int transition, int weight) {
+int add_post_arc(struct PN *pn, signed int post_place, signed int transition, signed int weight) {
 	assert(pn != NULL);
 	assert(post_place >= 0);
 	assert(transition >= 0);
@@ -166,6 +174,11 @@ int add_post_arc(struct PN *pn, int post_place, int transition, int weight) {
 	}
 	// Assure that the post place to which the arc goes exists
 	if (post_place >= pn->nb_places) {
+		// Error
+		return -1;
+	}
+	// Ensure that the given weight is higher than 0
+	if (weight == 0) {
 		// Error
 		return -1;
 	}
@@ -191,10 +204,12 @@ int add_post_arc(struct PN *pn, int post_place, int transition, int weight) {
 	new_posts[nb_before] = new_post;
 	pn->post_conditions[transition].post_arcs = new_posts;
 
+	#ifdef VERBOSE
 	printf("Adding a post arc:\n");
 	printf("\tTransition t%i\n", transition);
 	printf("\tPost place p%i\n", post_place);
 	printf("\tWeight %i\n\n", weight);
+	#endif
 
 	// Ensure that the post condition is correctly added
 	assert(pn->post_conditions[transition].post_arcs[nb_before].post_place == post_place);
@@ -204,7 +219,7 @@ int add_post_arc(struct PN *pn, int post_place, int transition, int weight) {
 }
 
 
-void consume_pre(struct PN * pn, int t, int * marking) {
+void consume_pre(struct PN * pn, signed int t, signed int * marking) {
 	for (int i=0; i<pn->pre_conditions[t].nb_pre_arcs; i++) {
 		int pre_place = pn->pre_conditions[t].pre_arcs[i].pre_place;
 		int weight = pn->pre_conditions[t].pre_arcs[i].weight;
@@ -212,7 +227,7 @@ void consume_pre(struct PN * pn, int t, int * marking) {
 	}
 }
 
-void produce_post(struct PN * pn, int t, int * marking) {
+void produce_post(struct PN * pn, signed int t, signed int * marking) {
 	for (int i=0; i<pn->post_conditions[t].nb_post_arcs; i++) {
 		int post_place = pn->post_conditions[t].post_arcs[i].post_place;
 		int weight = pn->post_conditions[t].post_arcs[i].weight;
@@ -223,7 +238,7 @@ void produce_post(struct PN * pn, int t, int * marking) {
 /**
  * Fire the transition t
  */
-int *fire_transition(struct PN * pn, int t) {
+int *fire_transition(struct PN * pn, signed int t) {
 	int * new_marking = malloc(sizeof(int) * pn->nb_places);
 	
 	// Copy a the current marking to a new marking
@@ -262,7 +277,7 @@ int **fire_all_enabled_transitions(struct PN * pn) {
 /**
  * Return if the transition t is M-enabled
  */
-int t_m_enabled(struct PN *pn, int t) {
+int t_m_enabled(struct PN *pn, signed int t) {
 	int nb_pre_arcs = pn->pre_conditions[t].nb_pre_arcs;
 	int nb_successful_pre = 0;
 	

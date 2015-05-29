@@ -24,7 +24,9 @@ int main() {
 		cmocka_unit_test(add_post_arc_test3),
 
 		// Testing the function that tells you which transition are enabled 
-		cmocka_unit_test(t_enabled1_test),
+		cmocka_unit_test(t_enabled_test1),
+		cmocka_unit_test(t_enabled_test2),
+		cmocka_unit_test(t_enabled_test3),
 		
 		cmocka_unit_test(create_array_test1),
 		cmocka_unit_test(create_array_test2),

@@ -24,5 +24,8 @@ void add_post_arc_test2(void **state);
 void add_post_arc_test3(void **state);
 
 // Testing the function that tells you which transition are enabled 
-void t_enabled1_test(void **state);
+void t_enabled_test1(void **state);
+void t_enabled_test2(void **state);
+void t_enabled_test3(void **state);
+
 #endif

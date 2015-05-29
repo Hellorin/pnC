@@ -278,7 +278,7 @@ int t_m_enabled(struct PN *pn, signed int t) {
  * Return all the M-enabled transition
  */
 int* m_enabled(struct PN *pn) {
-	int * transitions = malloc(sizeof(int) * pn->nb_transitions);
+	int * transitions = malloc(sizeof(*transitions) * pn->nb_transitions);
 
 	// Check for each transition, if its pre condition is satisfied
 	int nb_enabled_transition = 0;

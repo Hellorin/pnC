@@ -7,25 +7,18 @@
 #include "pnc.h"
 
 typedef struct {
-	signed int pre_place;
+	signed int place;
 	signed int transition;
 	signed int weight;
-} pre_arc;
-
-typedef struct {
-	signed int transition;
-	signed int post_place;
-	signed int weight;
-} post_arc;
+} arc;
 
 typedef struct {
 	signed int nb_pre_arcs;
-	pre_arc *pre_arcs;
+	arc *pre_arcs;
 } pre_conds;
 
-// 
 typedef struct {
-	post_arc *post_arcs;
+	arc *post_arcs;
 	signed int nb_post_arcs;
 } post_conds;
 
@@ -52,14 +45,13 @@ struct PN {
  * Create a new PN. Gives the number of places, transitions and M0,
  * the initial marking
  */
-struct PN *new_pn(int nb_places, int nb_transitions, signed int marking[]) {
+struct PN *new_pn(signed int nb_places, signed int nb_transitions, signed int marking[]) {
 	assert(nb_transitions != 0 && nb_places != 0);
 	
-	if (nb_transitions == 0 && nb_places == 0) {
+	if (nb_transitions <= 0 && nb_places <= 0) {
 		return NULL;
 	}
 
-	
 	struct PN *pn = malloc(sizeof(struct PN));
 
 	// Initialize places
@@ -128,19 +120,19 @@ int add_pre_arc(struct PN *pn, signed int pre_place, signed int transition, sign
 
 	// Create a new list of pre conditions of the size of the old + 1
 	// for that transition
-	pre_arc *pre = pn->pre_conditions[transition].pre_arcs;
-	pre_arc *new_pres = malloc(sizeof(pre_arc) * (nb_before + 1));
+	arc *pre = pn->pre_conditions[transition].pre_arcs;
+	arc *new_pres = malloc(sizeof(arc) * (nb_before + 1));
 
 	// Add the existing pre conditions to the new list of pre conditions
 	for (int i=0; i<nb_before; i++) {
-		new_pres[i].pre_place = pre[i].pre_place;
+		new_pres[i].place = pre[i].place;
 		new_pres[i].transition = pre[i].transition;
 		new_pres[i].weight = pre[i].weight;
 	}
 	
 	// Create the new pre condition for that transition and add it to the list
 	// of pre conditions
-	pre_arc new_pre = {pre_place, transition, weight};
+	arc new_pre = {pre_place, transition, weight};
 	new_pres[nb_before] = new_pre;
 	pn->pre_conditions[transition].pre_arcs = new_pres;
 
@@ -151,7 +143,7 @@ int add_pre_arc(struct PN *pn, signed int pre_place, signed int transition, sign
 	printf("\tWeight %i\n\n", weight);
 	#endif
 
-	assert(pn->pre_conditions[transition].pre_arcs[nb_before].pre_place == pre_place);
+	assert(pn->pre_conditions[transition].pre_arcs[nb_before].place == pre_place);
 	assert(pn->pre_conditions[transition].pre_arcs[nb_before].transition == transition);
 	
 	return 0;
@@ -187,19 +179,19 @@ int add_post_arc(struct PN *pn, signed int post_place, signed int transition, si
 
 	// Create a new list of post conditions of the size of the old + 1
 	// for that transition
-	post_arc *post = pn->post_conditions[transition].post_arcs;
-	post_arc *new_posts = malloc(sizeof(post_arc) * (nb_before + 1));
+	arc *post = pn->post_conditions[transition].post_arcs;
+	arc *new_posts = malloc(sizeof(arc) * (nb_before + 1));
 
 	// Add the existing post conditions to the new list of post conditions
 	for (int i=0; i<nb_before; i++) {
-		new_posts[i].post_place = post[i].post_place;
+		new_posts[i].place = post[i].place;
 		new_posts[i].transition = post[i].transition;
 		new_posts[i].weight = post[i].weight;
 	}
 	
 	// Create the new post condition for that transition and add it to the list
 	// of post conditions
-	post_arc new_post = {transition, post_place, weight};
+	arc new_post = {transition, post_place, weight};
 	new_posts[nb_before] = new_post;
 	pn->post_conditions[transition].post_arcs = new_posts;
 
@@ -211,7 +203,7 @@ int add_post_arc(struct PN *pn, signed int post_place, signed int transition, si
 	#endif
 
 	// Ensure that the post condition is correctly added
-	assert(pn->post_conditions[transition].post_arcs[nb_before].post_place == post_place);
+	assert(pn->post_conditions[transition].post_arcs[nb_before].place == post_place);
 	assert(pn->post_conditions[transition].post_arcs[nb_before].transition == transition);
 
 	return 0;
@@ -220,7 +212,7 @@ int add_post_arc(struct PN *pn, signed int post_place, signed int transition, si
 
 void consume_pre(struct PN * pn, signed int t, signed int * marking) {
 	for (int i=0; i<pn->pre_conditions[t].nb_pre_arcs; i++) {
-		int pre_place = pn->pre_conditions[t].pre_arcs[i].pre_place;
+		int pre_place = pn->pre_conditions[t].pre_arcs[i].place;
 		int weight = pn->pre_conditions[t].pre_arcs[i].weight;
 		marking[pre_place] -= weight;
 	}
@@ -228,7 +220,7 @@ void consume_pre(struct PN * pn, signed int t, signed int * marking) {
 
 void produce_post(struct PN * pn, signed int t, signed int * marking) {
 	for (int i=0; i<pn->post_conditions[t].nb_post_arcs; i++) {
-		int post_place = pn->post_conditions[t].post_arcs[i].post_place;
+		int post_place = pn->post_conditions[t].post_arcs[i].place;
 		int weight = pn->post_conditions[t].post_arcs[i].weight;
 		marking[post_place] += weight;
 	}
@@ -289,7 +281,7 @@ int t_m_enabled(struct PN *pn, signed int t) {
 	
 	// Check the precondition of the transition
 	for (int j=0; j<nb_pre_arcs; j++) {
-		int pre_place = pn->pre_conditions[t].pre_arcs[j].pre_place;
+		int pre_place = pn->pre_conditions[t].pre_arcs[j].place;
 		if (pn->pre_conditions[t].pre_arcs[j].weight <= pn->marking[pre_place]) {
 			nb_successful_pre++;
 		}

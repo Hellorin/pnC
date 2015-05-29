@@ -27,8 +27,22 @@ void add_pre_arc_test1(void **state) {
 	struct PN * pn = new_pn(2, 1, marking);
 	assert_non_null(pn);
 
-	assert_return_code(add_pre_arc(pn, 0, 0, 1), 0);
-	assert_return_code(add_pre_arc(pn, 1, 0, 1), 0);
+	assert_true(add_pre_arc(pn, 0, 0, 1) == 0);
+	assert_true(add_pre_arc(pn, 1, 0, 1) == 0);
+
+	destroy_pn(pn);
+
+}
+
+
+/* A test case that test the abnormal creation of a PN */
+void add_pre_arc_test2(void **state) {
+	int marking[2] = {1,0};
+	struct PN * pn = new_pn(2, 1, marking);
+	assert_non_null(pn);
+
+	assert_true(add_pre_arc(pn, 3, 0, 1) == -1);
+	assert_true(add_pre_arc(pn, 1, 3, 1) == -1);
 
 	destroy_pn(pn);
 

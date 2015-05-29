@@ -333,22 +333,6 @@ void destroy_pn(struct PN *pn) {
 
 /*int main()
 {
-	int marking[4] = {1,0,1,0};
-	struct PN *pn = new_pn(4, 2, marking);
-	
-	add_pre_arc(pn, 0, 0, 1);
-	add_post_arc(pn, 1, 0, 1);
-	
-	add_pre_arc(pn, 2, 1, 1);
-	add_post_arc(pn, 3, 1, 1);
-	
-	int * en_transitions = m_enabled(pn);
-	for (int i=0; i<2; i++) {
-		if (en_transitions[i] == -1) {
-			break;
-		}
-		printf("t%i = %i\n", i, en_transitions[i]);
-	}
 	
 	int * new_marking = fire_transition(pn, 0);
 	for (int i=0; i<pn->nb_places; i++) {

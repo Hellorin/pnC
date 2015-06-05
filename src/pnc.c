@@ -6,35 +6,6 @@
 // Personal includes
 #include "pnc.h"
 
-typedef struct {
-	signed int nb_pre_arcs;
-	dyn_array *pre_arcs;
-} pre_conds;
-
-typedef struct {
-	dyn_array *post_arcs;
-	signed int nb_post_arcs;
-} post_conds;
-
-struct PN {
-	signed int nb_places;
-	signed int nb_transitions;
-
-	// P (places)
-	signed int *places;
-
-	// T (transitions)
-	signed int *transitions;
-	
-	// F = F_1 U F_2 (flow)
-	// W = W_1 U W_2 (weight)
-	pre_conds *pre_conditions; // F_1 and W_1
-	post_conds *post_conditions; // F_2 and W_2
-	
-	// M (marking)
-	signed int *marking;
-};
-
 /**
  * Create a new PN. Gives the number of places, transitions and M0,
  * the initial marking
@@ -131,8 +102,8 @@ int add_pre_arc(struct PN *pn, signed int pre_place, signed int transition, sign
 	printf("\tWeight %i\n\n", weight);
 	#endif
 
-	assert(pn->pre_conditions[transition].pre_arcs[nb_before].place == pre_place);
-	assert(pn->pre_conditions[transition].pre_arcs[nb_before].transition == transition);
+	//assert(pn->pre_conditions[transition].pre_arcs[nb_before].place == pre_place);
+	//assert(pn->pre_conditions[transition].pre_arcs[nb_before].transition == transition);
 	
 	return 0;
 }
@@ -182,8 +153,8 @@ int add_post_arc(struct PN *pn, signed int post_place, signed int transition, si
 	#endif
 
 	// Ensure that the post condition is correctly added
-	assert(pn->post_conditions[transition].post_arcs[nb_before].place == post_place);
-	assert(pn->post_conditions[transition].post_arcs[nb_before].transition == transition);
+	//assert(pn->post_conditions[transition].post_arcs[nb_before].place == post_place);
+	//assert(pn->post_conditions[transition].post_arcs[nb_before].transition == transition);
 
 	return 0;
 }

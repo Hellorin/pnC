@@ -7,6 +7,37 @@
 
 #include "dynarray.h"
 #include "arc.h"
+
+typedef struct {
+	signed int nb_pre_arcs;
+	dyn_array *pre_arcs;
+} pre_conds;
+
+typedef struct {
+	dyn_array *post_arcs;
+	signed int nb_post_arcs;
+} post_conds;
+
+struct PN {
+	signed int nb_places;
+	signed int nb_transitions;
+
+	// P (places)
+	signed int *places;
+
+	// T (transitions)
+	signed int *transitions;
+	
+	// F = F_1 U F_2 (flow)
+	// W = W_1 U W_2 (weight)
+	pre_conds *pre_conditions; // F_1 and W_1
+	post_conds *post_conditions; // F_2 and W_2
+	
+	// M (marking)
+	signed int *marking;
+};
+
+
 /**
  * Create a new PN. Gives the number of places, transitions and M0,
  * the initial marking
@@ -26,7 +57,7 @@ int add_pre_arc(struct PN *pn, signed int pre_place, signed int transition, sign
 /**
  * Add a post arc to a transition
  */
-int add_post_arc(struct PN *pn, signed int transition, signed int post_place, signed int weight);
+int add_post_arc(struct PN *pn, signed int post_place, signed int transition, signed int weight);
 
 /**
  * Return if the transition t is M-enabled

@@ -28,4 +28,9 @@ void t_enabled_test1(void **state);
 void t_enabled_test2(void **state);
 void t_enabled_test3(void **state);
 
+// Testing the function fire a transition
+void t_enabled_fire_test1(void **state);
+
+// Testing the function that
+
 #endif

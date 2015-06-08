@@ -74,4 +74,9 @@ int* m_enabled(struct PN *pn);
  */
 int *fire_transition(struct PN * pn, signed int t);
 
+/**
+ * Fire all possible transitions
+ */
+int **fire_all_enabled_transitions(struct PN * pn, int * nb_markings);
+
 #endif

@@ -200,6 +200,10 @@ int *fire_transition(struct PN * pn, signed int t) {
 	
 	// Fire the transition
 	if (t_m_enabled(pn, t)) {
+		#ifdef VERBOSE
+		printf("Firing the transition t%d\n", t);
+		#endif
+
 		consume_pre(pn, t, new_marking);
 
 		produce_post(pn, t, new_marking);
@@ -208,20 +212,19 @@ int *fire_transition(struct PN * pn, signed int t) {
 	return new_marking;
 }
 
-int **fire_all_enabled_transitions(struct PN * pn) {
+int **fire_all_enabled_transitions(struct PN * pn, int * nb_markings) {
 	int ** all_reachable_marking = malloc(sizeof (int *) * pn->nb_transitions);
-
+	int curr_nb_markings = *nb_markings;
+	
 	for (int i=0; i<pn->nb_transitions; i++) {
-		if (t_m_enabled) {
+		if (t_m_enabled(pn, i)) {
 			int * new_marking = fire_transition(pn, i);
-			all_reachable_marking[i] = new_marking;
-		} else {
-			int * new_marking = malloc(sizeof(* new_marking) * pn->nb_places);
-			for (int j=0; j<pn->nb_places; j++) {
-				new_marking[j] = -1;
-			}
+			all_reachable_marking[curr_nb_markings] = new_marking;
+			curr_nb_markings++;
 		}
 	}
+
+	*nb_markings = curr_nb_markings;
 
 	return all_reachable_marking;
 }
@@ -302,33 +305,6 @@ void destroy_pn(struct PN *pn) {
 	// Free marking
 	free(pn->marking);
 }
-
-
-/*int main()
-{
-	
-	int * new_marking = fire_transition(pn, 0);
-	for (int i=0; i<pn->nb_places; i++) {
-		printf("%i, ", new_marking[i]);
-	}
-	printf("\n");
-	
-	int ** all_marking = fire_all_enabled_transitions(pn);
-	for (int i=0; i<pn->nb_transitions; i++) {
-		for (int j=0; j<pn->nb_places; j++) {
-			if (all_marking[i][j] != -1) {
-				printf("%i ", all_marking[i][j]);
-			} else {
-				continue;
-			}
-		}
-		printf("\n");
-	}
-		
-	destroy_pn(pn);
-	
-	return 0;
-}*/
 
 
 

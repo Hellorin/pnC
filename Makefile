@@ -3,7 +3,7 @@ COMPILER = gcc
 DEBUG = -DNDEBUG
 
 HEADER_FOLDER = src
-SRC_FOLDER = src
+SRC_FOLDER = lib/src
 INC_FOLDER = inc
 BIN_FOLDER = bin
 EXAMPLE_FOLDER = example
@@ -19,7 +19,7 @@ TESTS_BIN_FOLDER = tests/bin
 PNC_SRCS = $(SRC_FOLDER)/pnc.c
 UTIL_SRCS = $(SRC_FOLDER)/dynarray.c
 
-PNC_INCLUDE = inc
+PNC_INCLUDE = lib/inc
 
 INCLUDES = -I $(PNC_INCLUDE)
 

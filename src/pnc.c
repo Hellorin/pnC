@@ -142,7 +142,7 @@ int add_post_arc(struct PN *pn, signed int post_place, signed int transition, si
 	
 	// Create the new post condition for that transition and add it to the list
 	// of post conditions
-	arc new_post = {transition, post_place, weight};
+	arc new_post = {post_place, transition, weight};
 	append_element(pn->post_conditions[transition].post_arcs, new_post);
 
 	#ifdef VERBOSE
@@ -165,6 +165,7 @@ void consume_pre(struct PN * pn, signed int t, signed int * marking) {
 		arc * a = get_element(pn->pre_conditions[t].pre_arcs, i);
 		int pre_place = a->place;
 		int weight = a->weight;
+
 		marking[pre_place] -= weight;
 	}
 }
@@ -174,6 +175,7 @@ void produce_post(struct PN * pn, signed int t, signed int * marking) {
 		arc * a = get_element(pn->post_conditions[t].post_arcs, i);
 		int post_place = a->place;
 		int weight = a->weight;
+
 		marking[post_place] += weight;
 	}
 }

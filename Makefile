@@ -5,6 +5,12 @@ DEBUG = -DNDEBUG
 HEADER_FOLDER = src
 SRC_FOLDER = src
 BIN_FOLDER = bin
+EXAMPLE_FOLDER = example
+EXAMPLE_INC_FOLDER = $(EXAMPLE_FOLDER)/include
+EXAMPLE_SRC_FOLDER = $(EXAMPLE_FOLDER)
+EXAMPLE_BIN_FOLDER = $(EXAMPLE_FOLDER)/bin
+
+EXAMPLE_SRCS = $(EXAMPLE_SRC_FOLDER)/example.c
 
 TESTS_SRC_FOLDER = tests
 TESTS_BIN_FOLDER = tests/bin
@@ -23,22 +29,14 @@ BIN_MAIN_TEST = $(TESTS_BIN_FOLDER)/alltests.o
 
 LIBS = -l cmocka
 
-all: $(SRCS)
-	mkdir -p $(BIN_FOLDER)
-	gcc $(DEBUG) src/pnc.c -o bin/pnc.o 
+all: $(SRCS) $(UTIL_SRCS) $(EXAMPLE_SRCS)
+	mkdir -p $(EXAMPLE_BIN_FOLDER)
+	$(COMPILER) -DVERBOSE $(DEBUG) $(INCLUDES) $(UTIL_SRCS) $(SRCS) $(EXAMPLE_SRCS) -o $(EXAMPLE_BIN_FOLDER)/example.o
 
-array:
-	mkdir -p $(BIN_FOLDER)
-	gcc $(DEBUG) src/dynarray.c -o bin/dynarray.o 
-
-test: $(SRCS)
+test: $(SRCS) $(UTIL_SRCS)
 	mkdir -p $(TESTS_BIN_FOLDER)
 	$(COMPILER) $(DEBUG) $(LIBS) $(INCLUDES) $(UTIL_SRCS) $(SRCS) $(TESTS) $(SRC_MAIN_TEST) -o $(BIN_MAIN_TEST)
 	$(BIN_MAIN_TEST)
-
-debug: $(SRCS)
-	mkdir -p bin
-	gcc src/pnc.c -o bin/pnc.o
 
 clean:
 	rm -r -f $(BIN_FOLDER)

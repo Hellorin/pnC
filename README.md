@@ -14,7 +14,7 @@ A simple C library for black and white Petri nets. In order to represent Petri n
 - **tests**: folders with cmocka tests
 
 ## How to tests the library
-This library has been tested using the [cmocka unit testint library](https://cmocka.org/). Therefore, the latter must be installed.
+This library has been tested using the [cmocka unit testing library](https://cmocka.org/). Therefore, the latter must be installed.
 
 Once, it is installed, one must only called the following line:
 > make test

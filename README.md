@@ -19,7 +19,10 @@ This library has been tested using the [cmocka unit testint library](https://cmo
 Once, it is installed, one must only called the following line:
 > make test
 
-## How to execute the example
+## How to compile/execute the example
+To compile the example:
 > make
+
+To execute the example
 > ./example/bin/example.o
 

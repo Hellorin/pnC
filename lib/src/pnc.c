@@ -1,4 +1,9 @@
-
+/**
+ * pnc.c
+ *
+ * Define black and white Petri nets and theirs operations
+ *
+ **/
 
 // Std includes
 
@@ -8,7 +13,16 @@
 
 /**
  * Create a new PN. Gives the number of places, transitions and M0,
- * the initial marking
+ * the initial marking.
+ *
+ * @param nb_places
+ *      Number of places of the new Petri net
+ * @param nb_transitions
+ *      Number of transitions of the new Petri net
+ * @param marking
+ *      Initial marking for the Petri net
+ * @return
+ *      The newly created Petri net or NULL if there was a problem
  */
 struct PN *new_pn(signed int nb_places, signed int nb_transitions, signed int marking[]) {
     assert(nb_transitions != 0 && nb_places != 0);
@@ -65,6 +79,9 @@ struct PN *new_pn(signed int nb_places, signed int nb_transitions, signed int ma
 
 /**
  * Destroy a PN (free memory)
+ *
+ * @param pn
+ *      The Petri net to be destroyed
  */
 void destroy_pn(struct PN *pn) {
     free(pn->places);
@@ -94,10 +111,28 @@ void destroy_pn(struct PN *pn) {
     free(pn->marking);
 }
 
+/**
+ * Return the current marking of a Petri net
+ *
+ * @param pn
+ *      The Petri net from which we desire the marking
+ * @return
+ *      The marking of the Petri net given in parameter
+ */
 int* get_marking(struct PN *pn) {
     return pn->marking;
 }
 
+/**
+ * Set the current marking of a Petri net
+ *
+ * @param pn
+ *      The Petri net from which we desire to set the marking
+ * @param marking
+ *      The marking to be set
+ * @param size
+ *      The size of the marking to be set
+ */
 void set_marking(struct PN *pn, signed int marking[], signed int size) {
     for (int i = 0; i < size; i++) {
         pn->marking[i] = marking[i];
@@ -106,6 +141,17 @@ void set_marking(struct PN *pn, signed int marking[], signed int size) {
 
 /**
  * Add a pre arc to a transition
+ *
+ * @param pn
+ *      The Petri net for which we must add a pre arc from a given place to a transition.
+ * @param pre_place
+ *      The pre place of the arc
+ * @param transition
+ *      The transition of the arc
+ * @param weight
+ *      The weight of the arc
+ * @return
+ *      -1 if there was a problem, 0 otherwise
  */
 int add_pre_arc(struct PN *pn, signed int pre_place, signed int transition, signed int weight) {
     assert(pn != NULL);
@@ -155,6 +201,17 @@ int add_pre_arc(struct PN *pn, signed int pre_place, signed int transition, sign
 
 /**
  * Add a post arc to a transition
+ *
+ * @param pn
+ *      The Petri net for which we must add a post arc from a given transition to a place.
+ * @param post_place
+ *      The post place of the arc
+ * @param transition
+ *      The transition of the arc
+ * @param weight
+ *      The weight of the arc
+ * @return
+ *      -1 if there was a problem, 0 otherwise
  */
 int add_post_arc(struct PN *pn, signed int post_place, signed int transition, signed int weight) {
     assert(pn != NULL);
@@ -257,6 +314,16 @@ int *fire_transition(struct PN * pn, signed int t) {
     return new_marking;
 }
 
+/**
+ * Fire all enabled transitions
+ * 
+ * @param pn
+ *      The Petri net itself
+ * @param nb_markings
+ *      A pointer to let know the caller how many markings were reached
+ * @return
+ *      All reachable markings
+ */
 int **fire_all_enabled_transitions(struct PN * pn, int * nb_markings) {
     int ** all_reachable_marking = malloc(sizeof (int *) * pn->nb_transitions);
     int curr_nb_markings = *nb_markings;
@@ -279,8 +346,21 @@ int **fire_all_enabled_transitions(struct PN * pn, int * nb_markings) {
 
 /**
  * Return if the transition t is M-enabled
+ *
+ * @param pn
+ *      The Petri net from which we want to know all enabled transitions
+ *      from its current marking.
+ * @param t
+ *      The transition that we want to know if it is enabled or not
+ * @return
+ *      1 if the pre conditions are met, 0 if not, -1 if the transitions doesn't exist
  */
 int t_m_enabled(struct PN *pn, signed int t) {
+    // The transition doesn't exist
+    if (t >= pn->nb_transitions) {
+        return -1;
+    }
+
     int nb_pre_arcs = pn->pre_conditions[t].nb_pre_arcs;
     int nb_successful_pre = 0;
 
@@ -300,6 +380,12 @@ int t_m_enabled(struct PN *pn, signed int t) {
 
 /**
  * Return all the M-enabled transition
+ *
+ * @param pn
+ *      The Petri net from which we want to know all enabled transitions
+ *      from its current marking.
+ * @return
+ *      A list of enabled transitions
  */
 int* m_enabled(struct PN *pn) {
     int * transitions = malloc(sizeof(*transitions) * pn->nb_transitions);

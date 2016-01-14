@@ -1,3 +1,11 @@
+/**
+ * pnc.h
+ *
+ * Define black and white Petri nets and theirs operations
+ *
+ **/
+
+
 #ifndef PNC_H
 #define PNC_H
 

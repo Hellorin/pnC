@@ -1,3 +1,10 @@
+/**
+ * arc.h
+ *
+ * Define arcs of a Petri net
+ *
+ **/
+
 #ifndef ARC_H
 #define ARC_H
 

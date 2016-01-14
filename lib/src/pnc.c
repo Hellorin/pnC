@@ -11,8 +11,14 @@
  * the initial marking
  */
 struct PN *new_pn(signed int nb_places, signed int nb_transitions, signed int marking[]) {
-	assert(nb_transitions != 0 && nb_places != 0);
-	
+    assert(nb_transitions != 0 && nb_places != 0);
+
+    #ifdef VERBOSE
+    printf("Creating a new PN:\n");
+    printf("\t%i places\n", nb_places);
+    printf("\t%i transitions\n\n", nb_transitions);
+    #endif
+
 	if (nb_transitions <= 0 && nb_places <= 0) {
 		return NULL;
 	}
@@ -55,6 +61,48 @@ struct PN *new_pn(signed int nb_places, signed int nb_transitions, signed int ma
 	
 	assert(pn != NULL);
 	return pn;
+}
+
+/**
+ * Destroy a PN (free memory)
+ */
+void destroy_pn(struct PN *pn) {
+	free(pn->places);
+	free(pn->transitions);
+
+
+	// Free pre conditions
+	for (int i=0; i<pn->nb_transitions; i++) {
+		int nb_arcs = pn->pre_conditions[i].nb_pre_arcs;
+
+		// Free pre arcs
+		if (nb_arcs != 0) {
+			free(pn->pre_conditions[i].pre_arcs);
+		}
+	}
+
+	// Free post conditions
+	for (int i=0; i<pn->nb_transitions; i++) {
+		int nb_arcs = pn->post_conditions[i].nb_post_arcs;
+		
+		// Free post arcs
+		if (nb_arcs != 0) {
+			free(pn->post_conditions[i].post_arcs);
+		}
+	}
+
+	// Free marking
+	free(pn->marking);
+}
+
+int* get_marking(struct PN *pn) {
+    return pn->marking;
+}
+
+void set_marking(struct PN *pn, signed int marking[], signed int size) {
+    for (int i = 0; i < size; i++) {
+        pn->marking[i] = marking[i];
+    }
 }
 
 /**
@@ -274,37 +322,7 @@ int* m_enabled(struct PN *pn) {
 	return transitions;
 }
 
-/**
- * Destroy a PN (free memory)
- */
-void destroy_pn(struct PN *pn) {
-	free(pn->places);
-	free(pn->transitions);
 
-
-	// Free pre conditions
-	for (int i=0; i<pn->nb_transitions; i++) {
-		int nb_arcs = pn->pre_conditions[i].nb_pre_arcs;
-
-		// Free pre arcs
-		if (nb_arcs != 0) {
-			free(pn->pre_conditions[i].pre_arcs);
-		}
-	}
-
-	// Free post conditions
-	for (int i=0; i<pn->nb_transitions; i++) {
-		int nb_arcs = pn->post_conditions[i].nb_post_arcs;
-		
-		// Free post arcs
-		if (nb_arcs != 0) {
-			free(pn->post_conditions[i].post_arcs);
-		}
-	}
-
-	// Free marking
-	free(pn->marking);
-}
 
 
 

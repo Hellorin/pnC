@@ -50,6 +50,16 @@ struct PN *new_pn(signed int nb_places, signed int nb_transitions, signed int ma
 void destroy_pn(struct PN *pn);
 
 /**
+ * Return the current marking of a Petri net
+ */
+int* get_marking(struct PN *pn);
+
+/**
+ * Set the current marking of a Petri net
+ */
+void set_marking(struct PN *pn, signed int marking[], signed int size);
+
+/**
  * Add a pre arc to a transition
  */
 int add_pre_arc(struct PN *pn, signed int pre_place, signed int transition, signed int weight);

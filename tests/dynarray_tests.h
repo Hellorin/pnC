@@ -1,10 +1,25 @@
+/**
+ * dynarray_tests.h
+ *
+ * Tests for dynamic array of arcs used in pnC
+ *
+ * @author David LAWRENCE
+ *
+ **/
+
 #ifndef DYNARRAY_TESTS_H
 #define DYNARRAY_TESTS_H
 
+
+// Std includes
 #include <stdarg.h>
 #include <stddef.h>
+
+// Testing includes
 #include <setjmp.h>
 #include <cmocka.h>
+
+// Personal includes
 #include "dynarray.h"
 #include "pnc.h"
 

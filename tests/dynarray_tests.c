@@ -1,3 +1,12 @@
+/**
+ * dynarray_tests.c
+ *
+ * Tests for dynamic array of arcs used in pnC
+ *
+ * @author David LAWRENCE
+ *
+ **/
+
 #include "dynarray_tests.h"
 
 /* A testcase that test the creation of an array with no given

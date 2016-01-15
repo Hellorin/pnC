@@ -3,8 +3,13 @@
  *
  * Define dynamic array of arcs and operations
  *
+ * @author David LAWRENCE
+ *
  **/
 
+// Std includes
+
+// Personal includes
 #include "dynarray.h"
 
 /**

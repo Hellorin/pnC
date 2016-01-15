@@ -9,7 +9,7 @@ A simple C library for black and white Petri nets. In order to represent Petri n
 - **lib**: folder that contains the pnC library
     - **inc**: folder for headers
     - **src**
-        - *dynarray.c*: C code to have dynamic signed int arrays
+        - *dynarray.c*: C code to have dynamic Petri net arcs arrays
         - *pnc.c*: C code to represent a black and white Petri nets
 - **tests**: folders with cmocka tests
 

@@ -30,7 +30,6 @@ void t_enabled_test3(void **state);
 
 // Testing the function fire a transition
 void t_enabled_fire_test1(void **state);
-
-// Testing the function that
+void fire_a_transition_test1(void **state);
 
 #endif

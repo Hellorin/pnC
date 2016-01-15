@@ -3,10 +3,11 @@
  *
  * Define black and white Petri nets and theirs operations
  *
+ * @author David LAWRENCE
+ *
  **/
 
 // Std includes
-
 
 // Personal includes
 #include "pnc.h"

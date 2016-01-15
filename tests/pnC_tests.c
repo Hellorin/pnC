@@ -1,15 +1,22 @@
+/**
+ * pnC_tests.c
+ *
+ * Tests for the pnC library especially
+ *
+ * @author David LAWRENCE
+ *
+ **/
+
 #include "pnC_tests.h"
 
 /* A test case that test the normal creation of a PN */
 void create_pn_test1(void **state) {
     signed int marking[1] = {1};
     struct PN * pn = new_pn(1, 1, marking);
-    
-    assert_non_null(pn);
-    
-    destroy_pn(pn);
 
-    //(void) state; /* unused */
+    assert_non_null(pn);
+
+    destroy_pn(pn);
 }
 
 /* A test case that test the abnormal creation of a PN 
@@ -17,7 +24,7 @@ void create_pn_test1(void **state) {
 void create_pn_test2(void **state) {
     signed int marking[1] = {1};
     struct PN * pn = new_pn(0, 0, marking);
-    
+
     assert_null(pn);
 }
 
@@ -27,7 +34,7 @@ void create_pn_test3(void **state) {
     signed int nb_transitions = 0;
     signed int marking[1] = {1};
     struct PN * pn = new_pn(1, nb_transitions, marking);
-    
+
     assert_non_null(pn);
 }
 
@@ -37,7 +44,7 @@ void create_pn_test4(void **state) {
     signed int nb_places = 0;
     signed int marking[1] = {1};
     struct PN * pn = new_pn(nb_places, 1, marking);
-    
+
     assert_non_null(pn);
 }
 
@@ -121,7 +128,7 @@ void add_post_arc_test3(void **state) {
     signed int marking[2] = {1,0};
     struct PN * pn = new_pn(2, 1, marking);
     assert_non_null(pn);
-    
+
     // Cannot put a weight of 0 to an arc
     signed int weight = 0;
     assert_false(add_post_arc(pn, 0, 0, weight) == 0);
@@ -130,22 +137,21 @@ void add_post_arc_test3(void **state) {
     destroy_pn(pn);
 }
 
-
-/* TODO: comment */
+/* A test case that test the retrieving of the set of transitions enabled */
 void t_enabled_test1(void **state) {
     signed int marking[4] = {1,0,1,0};
     struct PN *pn = new_pn(4, 2, marking);
     assert_non_null(pn);
-    
+
     assert_true(add_pre_arc(pn, 0, 0, 1) == 0);
     assert_true(add_post_arc(pn, 1, 0, 1) == 0);
-    
+
     assert_true(add_pre_arc(pn, 2, 1, 1) == 0);
     assert_true(add_post_arc(pn, 3, 1, 1) == 0);
-    
+
     signed int * en_transitions = m_enabled(pn);
     signed int expected_transitions[2] = {0,1};
-    
+
     for (int i=0; i<2; i++) {
         if (en_transitions[i] == -1) {
             break;
@@ -154,20 +160,21 @@ void t_enabled_test1(void **state) {
     }
 }
 
+/* A second test case that test the retrieving of the set of transitions enabled */
 void t_enabled_test2(void **state) {
     signed int marking[4] = {1,0,0,0};
     struct PN *pn = new_pn(4, 2, marking);
     assert_non_null(pn);
-    
+
     assert_true(add_pre_arc(pn, 0, 0, 1) == 0);
     assert_true(add_post_arc(pn, 1, 0, 1) == 0);
-    
+
     assert_true(add_pre_arc(pn, 2, 1, 1) == 0);
     assert_true(add_post_arc(pn, 3, 1, 1) == 0);
-    
+
     signed int * en_transitions = m_enabled(pn);
     signed int expected_transitions[1] = {0};
-    
+
     for (int i=0; i<2; i++) {
         if (en_transitions[i] == -1) {
             break;
@@ -176,19 +183,20 @@ void t_enabled_test2(void **state) {
     }
 }
 
+/* A third test case that test the retrieving of the set of transitions enabled */
 void t_enabled_test3(void **state) {
     signed int marking[4] = {0,0,0,0};
     struct PN *pn = new_pn(4, 2, marking);
     assert_non_null(pn);
-    
+
     assert_true(add_pre_arc(pn, 0, 0, 1) == 0);
     assert_true(add_post_arc(pn, 1, 0, 1) == 0);
-    
+
     assert_true(add_pre_arc(pn, 2, 1, 1) == 0);
     assert_true(add_post_arc(pn, 3, 1, 1) == 0);
-    
+
     signed int * en_transitions = m_enabled(pn);
-    
+
     for (int i=0; i<1; i++) {
         if (en_transitions[i] == -1) {
             break;
@@ -197,20 +205,21 @@ void t_enabled_test3(void **state) {
     }
 }
 
-    void t_enabled_fire_test1(void **state) {
+/* A test case that test the firing of a transition */
+void t_enabled_fire_test1(void **state) {
     signed int marking[2] = {1,0};
     struct PN *pn = new_pn(2, 2, marking);
     assert_non_null(pn);
-    
+
     assert_true(add_pre_arc(pn, 0, 0, 1) == 0);
     assert_true(add_post_arc(pn, 1, 0, 1) == 0);
-    
+
     assert_true(add_pre_arc(pn, 1, 1, 1) == 0);
     assert_true(add_post_arc(pn, 0, 1, 1) == 0);
-    
+
     assert_true(t_m_enabled(pn,0) == 1);
     assert_true(t_m_enabled(pn,1) == 0);
-    
+
     int * marking1 = fire_transition(pn, 0);
     int expected1[2] = {0,1};
     for (int i=0; i<2; i++) {
@@ -222,14 +231,14 @@ void t_enabled_test3(void **state) {
     for (int i=0; i<2; i++) {
         assert_true(expected2[i] == marking1[i]);
     }
-    
+
     int nb_markings = 0;
     int ** list_markings = fire_all_enabled_transitions(pn, &nb_markings);
-    
-    assert_true(nb_markings == 1);
 
+    assert_true(nb_markings == 1);
 }
 
+/* A test case that test the retrieving of the set of transitions enabled */
 void fire_a_transition_test1(void **state) {
     signed int marking[4] = {1,0,1,0};
     struct PN *pn = new_pn(4, 2, marking);
@@ -239,8 +248,9 @@ void fire_a_transition_test1(void **state) {
     assert_true(add_pre_arc(pn, 2, 1, 1) == 0);
     assert_true(add_post_arc(pn, 3, 1, 1) == 0);
 
+    int expected[4] = {0,1,1,0};
     int * new_marking = fire_transition(pn, 0);
     for (int i=0; i<pn->nb_places; i++) {
-        printf("%i, ", new_marking[i]);
+        assert_true(new_marking[i] == expected[i]);
     }
 }

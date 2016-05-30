@@ -2,6 +2,6 @@ language: c
 sudo: required
 compiler:
     gcc
-install: "sudo apt-get install cmocka    "
+install: "sudo apt-get install libcmocka0"
 script:
     - make test

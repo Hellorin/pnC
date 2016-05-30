@@ -6,6 +6,7 @@ HEADER_FOLDER = src
 SRC_FOLDER = lib/src
 INC_FOLDER = inc
 BIN_FOLDER = bin
+BUILD_FOLDER = build
 EXAMPLE_FOLDER = example
 EXAMPLE_INC_FOLDER = $(EXAMPLE_FOLDER)/include
 EXAMPLE_SRC_FOLDER = $(EXAMPLE_FOLDER)
@@ -43,7 +44,19 @@ test: $(SRCS) $(UTIL_SRCS)
 	$(COMPILER) $(DEBUG) $(LIBS) $(INCLUDES) $(UTIL_SRCS) $(SRCS) $(TESTS) $(SRC_MAIN_TEST) -o $(BIN_MAIN_TEST)
 	$(BIN_MAIN_TEST)
 
+configure:
+	mkdir deps
+	cd deps && curl -O https://cmocka.org/files/1.0/cmocka-1.0.1.tar.xz
+	cd deps && xz -d cmocka-1.0.1.tar.xz
+	cd deps && tar vxf cmocka-1.0.1.tar
+	cd deps/cmocka-1.0.1 && mkdir build
+	cd deps/cmocka-1.0.1/build && cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug .. && make
+
 clean:
 	rm -r -f $(BIN_FOLDER)
 	rm -f pnc.o
 	rm -r -f $(TESTS_BIN_FOLDER)
+	rm -r -f $(BUILD_FOLDER)
+	rm -r -f cmocka*
+	rm -r -f deps
+	

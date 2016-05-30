@@ -22,14 +22,14 @@ UTIL_SRCS = $(SRC_FOLDER)/dynarray.c
 
 PNC_INCLUDE = lib/inc
 
-INCLUDES = -I $(PNC_INCLUDE)
+INCLUDES = -I $(PNC_INCLUDE) -/usr/local/include
 
 SRCS = $(PNC_SRCS) $()
 TESTS = $(TESTS_SRC_FOLDER)/pnC_tests.c $(TESTS_SRC_FOLDER)/dynarray_tests.c
 SRC_MAIN_TEST = $(TESTS_SRC_FOLDER)/alltests.c
 BIN_MAIN_TEST = $(TESTS_BIN_FOLDER)/alltests.o
 
-LIBS = -l cmocka
+LIBS = -l cmockery
 
 all: $(SRCS) $(UTIL_SRCS) $(EXAMPLE_SRCS)
 	mkdir -p $(EXAMPLE_BIN_FOLDER)
@@ -46,11 +46,11 @@ test: $(SRCS) $(UTIL_SRCS)
 
 configure:
 	mkdir deps
-	cd deps && curl -O https://cmocka.org/files/1.0/cmocka-1.0.1.tar.xz
-	cd deps && xz -d cmocka-1.0.1.tar.xz
-	cd deps && tar vxf cmocka-1.0.1.tar
-	cd deps/cmocka-1.0.1 && mkdir build
-	cd deps/cmocka-1.0.1/build && cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug .. && make
+	cd deps && curl -O https://cmocka.org/files/1.0/cmocka-1.0.0.tar.xz
+	cd deps && xz -d cmocka-1.0.0.tar.xz
+	cd deps && tar vxf cmocka-1.0.0.tar
+	cd deps/cmocka-1.0.0 && mkdir build
+	cd deps/cmocka-1.0.0/build && cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug .. && make
 
 clean:
 	rm -r -f $(BIN_FOLDER)

@@ -50,7 +50,8 @@ configure:
 	cd deps && xz -d cmocka-1.0.0.tar.xz
 	cd deps && tar vxf cmocka-1.0.0.tar
 	cd deps/cmocka-1.0.0 && mkdir build
-	cd deps/cmocka-1.0.0/build && cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug .. && make
+	cd deps/cmocka-1.0.0/build && cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug .. && make && make install
+	
 
 clean:
 	rm -r -f $(BIN_FOLDER)

@@ -22,7 +22,7 @@ UTIL_SRCS = $(SRC_FOLDER)/dynarray.c
 
 PNC_INCLUDE = lib/inc
 
-INCLUDES = -I $(PNC_INCLUDE) -/usr/local/include
+INCLUDES = -I $(PNC_INCLUDE) -I deps/cmocka-1.0.0/build/include
 
 SRCS = $(PNC_SRCS) $()
 TESTS = $(TESTS_SRC_FOLDER)/pnC_tests.c $(TESTS_SRC_FOLDER)/dynarray_tests.c

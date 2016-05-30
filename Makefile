@@ -29,7 +29,7 @@ TESTS = $(TESTS_SRC_FOLDER)/pnC_tests.c $(TESTS_SRC_FOLDER)/dynarray_tests.c
 SRC_MAIN_TEST = $(TESTS_SRC_FOLDER)/alltests.c
 BIN_MAIN_TEST = $(TESTS_BIN_FOLDER)/alltests.o
 
-LIBS = -l cmockery
+LIBS = -lcmocka
 
 all: $(SRCS) $(UTIL_SRCS) $(EXAMPLE_SRCS)
 	mkdir -p $(EXAMPLE_BIN_FOLDER)
@@ -51,7 +51,6 @@ configure:
 	cd deps && tar vxf cmocka-1.0.0.tar
 	cd deps/cmocka-1.0.0 && mkdir build
 	cd deps/cmocka-1.0.0/build && cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug .. && make && make install
-	
 
 clean:
 	rm -r -f $(BIN_FOLDER)

@@ -1,6 +1,6 @@
 language: c
 compiler:
     gcc
-install: "make configure"
+install: "apt-get install cmocka"
 script:
     - make test
